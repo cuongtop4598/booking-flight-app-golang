@@ -1,0 +1,12 @@
+postgres:
+  host: localhost
+  port: 5432
+  username: cuongtop
+  password: admin
+  database: bookingdb
+  ssl_mode: disable
+  time_zone: Asia/Ho_Chi_Minh
+socket: 
+  host: localhost
+  port: 2223
+  type: tcp

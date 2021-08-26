@@ -1,0 +1,63 @@
+syntax = "proto3";
+package booking;
+
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+
+
+import "empty.proto";
+import "flight.proto";
+
+service Custormer { 
+    rpc CreateCustomer(CustomerRequest) returns (CustomerResponse);
+    rpc UpdateCustomer(CustomerRequest) returns (CustomerResponse); 
+    rpc FindCustomer(CustomerID) returns (CustomerResponse);
+    rpc ListCustomer(ListCustomerRequest) returns(ListCustomerResponse);
+    rpc ChangePassword(CustomerID) returns (Empty);
+    rpc BookingHistory(CustomerID) returns (History);
+}
+
+message CustomerID {
+    int64 id = 1;
+    string slut = 2;
+}
+
+message CustomerRequest {
+    string id = 1;
+    string slut = 2; 
+    string name = 3;
+    string address =4; 
+    string license_id = 5;
+    string phone_number = 6; 
+    string email = 7; 
+    string password = 8; 
+}
+
+message CustomerResponse {
+    string id = 1;
+    string name = 2;
+    string address = 3; 
+    string license_id = 4;
+    string phone_number = 5; 
+    string email = 6; 
+    string password = 7; 
+    bool active = 8; 
+    google.protobuf.Timestamp created_at = 9; 
+    google.protobuf.Timestamp updated_at = 10; 
+}
+
+message History {
+    string booking_code = 1; 
+    string booking_date = 2; 
+    string status = 3;
+    string customer_id = 4; 
+    FlightResponse flight = 5;
+}
+message ListCustomerRequest {
+    repeated CustomerRequest req_customers = 1;
+}
+
+message ListCustomerResponse {
+    repeated CustomerResponse res_customers = 1;
+}

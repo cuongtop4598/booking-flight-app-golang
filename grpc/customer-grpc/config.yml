@@ -1,0 +1,12 @@
+postgres:
+  host: localhost
+  port: 5445
+  username: admin
+  password: admin
+  database: customer
+  ssl_mode: disable
+  time_zone: Asia/Ho_Chi_Minh
+socket: 
+  host: localhost
+  port: 2224
+  type: tcp
