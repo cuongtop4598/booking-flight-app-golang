@@ -10,15 +10,18 @@ Uses REST API for your Public API
 Uses CockroachDB for data storage
 Hint: You could learn from examples project (sample) to understand how to create your GRPC Server and
 REST API.
-The booking microservices includes three main services consists:
+The booking microservices includes three main services consists: 
+
 1.Booking Service: uses for booking includes:
 - Booking
 - View Booking
 - Cancel Booking
+
 2.Flight Service: uses for manage flight
 - Create Flight
 - Update Flight
 - Search Flight
+
 3.Customer Service: uses for manage customer
 - Create Customer
 - Update Customer
