@@ -12,15 +12,19 @@ import "flight.proto";
 service Custormer { 
     rpc CreateCustomer(CustomerRequest) returns (CustomerResponse);
     rpc UpdateCustomer(CustomerRequest) returns (CustomerResponse); 
-    rpc FindCustomer(CustomerID) returns (CustomerResponse);
+    rpc FindCustomerByPhone(CustomerAuthen) returns (CustomerResponse);
+    rpc FindCustomerByEmail(CustomerAuthen) returns (CustomerResponse);
+    rpc FindCustomerById(CustomerAuthen) returns (CustomerResponse);
     rpc ListCustomer(ListCustomerRequest) returns(ListCustomerResponse);
-    rpc ChangePassword(CustomerID) returns (Empty);
-    rpc BookingHistory(CustomerID) returns (History);
+    rpc ChangePassword(CustomerAuthen) returns (Empty);
+    rpc BookingHistory(CustomerAuthen) returns (HistoryResponse);
 }
 
-message CustomerID {
-    int64 id = 1;
-    string slut = 2;
+message CustomerAuthen {
+    string id = 1;
+    string phone = 2;
+    string email = 3;
+    string password =4 ;
 }
 
 message CustomerRequest {
@@ -36,15 +40,16 @@ message CustomerRequest {
 
 message CustomerResponse {
     string id = 1;
-    string name = 2;
-    string address = 3; 
-    string license_id = 4;
-    string phone_number = 5; 
-    string email = 6; 
-    string password = 7; 
-    bool active = 8; 
-    google.protobuf.Timestamp created_at = 9; 
-    google.protobuf.Timestamp updated_at = 10; 
+    string slut = 2;
+    string name = 3;
+    string address = 4; 
+    string license_id = 5;
+    string phone_number = 6; 
+    string email = 7; 
+    string password = 8; 
+    bool active = 9; 
+    google.protobuf.Timestamp created_at = 10; 
+    google.protobuf.Timestamp updated_at = 11; 
 }
 
 message History {
@@ -54,8 +59,13 @@ message History {
     string customer_id = 4; 
     FlightResponse flight = 5;
 }
+
+message HistoryResponse {
+    repeated History historys = 1;
+}
+
 message ListCustomerRequest {
-    repeated CustomerRequest req_customers = 1;
+    bool active = 1; 
 }
 
 message ListCustomerResponse {

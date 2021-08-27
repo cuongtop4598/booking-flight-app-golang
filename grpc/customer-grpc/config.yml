@@ -1,7 +1,7 @@
 postgres:
   host: localhost
-  port: 5445
-  username: admin
+  port: 5432
+  username: cuongtop
   password: admin
   database: customer
   ssl_mode: disable

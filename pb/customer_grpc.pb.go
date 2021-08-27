@@ -20,10 +20,12 @@ const _ = grpc.SupportPackageIsVersion7
 type CustormerClient interface {
 	CreateCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error)
 	UpdateCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error)
-	FindCustomer(ctx context.Context, in *CustomerID, opts ...grpc.CallOption) (*CustomerResponse, error)
+	FindCustomerByPhone(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*CustomerResponse, error)
+	FindCustomerByEmail(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*CustomerResponse, error)
+	FindCustomerById(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*CustomerResponse, error)
 	ListCustomer(ctx context.Context, in *ListCustomerRequest, opts ...grpc.CallOption) (*ListCustomerResponse, error)
-	ChangePassword(ctx context.Context, in *CustomerID, opts ...grpc.CallOption) (*Empty, error)
-	BookingHistory(ctx context.Context, in *CustomerID, opts ...grpc.CallOption) (*History, error)
+	ChangePassword(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*Empty, error)
+	BookingHistory(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*HistoryResponse, error)
 }
 
 type custormerClient struct {
@@ -52,9 +54,27 @@ func (c *custormerClient) UpdateCustomer(ctx context.Context, in *CustomerReques
 	return out, nil
 }
 
-func (c *custormerClient) FindCustomer(ctx context.Context, in *CustomerID, opts ...grpc.CallOption) (*CustomerResponse, error) {
+func (c *custormerClient) FindCustomerByPhone(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*CustomerResponse, error) {
 	out := new(CustomerResponse)
-	err := c.cc.Invoke(ctx, "/booking.Custormer/FindCustomer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/booking.Custormer/FindCustomerByPhone", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *custormerClient) FindCustomerByEmail(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*CustomerResponse, error) {
+	out := new(CustomerResponse)
+	err := c.cc.Invoke(ctx, "/booking.Custormer/FindCustomerByEmail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *custormerClient) FindCustomerById(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*CustomerResponse, error) {
+	out := new(CustomerResponse)
+	err := c.cc.Invoke(ctx, "/booking.Custormer/FindCustomerById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +90,7 @@ func (c *custormerClient) ListCustomer(ctx context.Context, in *ListCustomerRequ
 	return out, nil
 }
 
-func (c *custormerClient) ChangePassword(ctx context.Context, in *CustomerID, opts ...grpc.CallOption) (*Empty, error) {
+func (c *custormerClient) ChangePassword(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/booking.Custormer/ChangePassword", in, out, opts...)
 	if err != nil {
@@ -79,8 +99,8 @@ func (c *custormerClient) ChangePassword(ctx context.Context, in *CustomerID, op
 	return out, nil
 }
 
-func (c *custormerClient) BookingHistory(ctx context.Context, in *CustomerID, opts ...grpc.CallOption) (*History, error) {
-	out := new(History)
+func (c *custormerClient) BookingHistory(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*HistoryResponse, error) {
+	out := new(HistoryResponse)
 	err := c.cc.Invoke(ctx, "/booking.Custormer/BookingHistory", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -94,10 +114,12 @@ func (c *custormerClient) BookingHistory(ctx context.Context, in *CustomerID, op
 type CustormerServer interface {
 	CreateCustomer(context.Context, *CustomerRequest) (*CustomerResponse, error)
 	UpdateCustomer(context.Context, *CustomerRequest) (*CustomerResponse, error)
-	FindCustomer(context.Context, *CustomerID) (*CustomerResponse, error)
+	FindCustomerByPhone(context.Context, *CustomerAuthen) (*CustomerResponse, error)
+	FindCustomerByEmail(context.Context, *CustomerAuthen) (*CustomerResponse, error)
+	FindCustomerById(context.Context, *CustomerAuthen) (*CustomerResponse, error)
 	ListCustomer(context.Context, *ListCustomerRequest) (*ListCustomerResponse, error)
-	ChangePassword(context.Context, *CustomerID) (*Empty, error)
-	BookingHistory(context.Context, *CustomerID) (*History, error)
+	ChangePassword(context.Context, *CustomerAuthen) (*Empty, error)
+	BookingHistory(context.Context, *CustomerAuthen) (*HistoryResponse, error)
 	mustEmbedUnimplementedCustormerServer()
 }
 
@@ -111,16 +133,22 @@ func (UnimplementedCustormerServer) CreateCustomer(context.Context, *CustomerReq
 func (UnimplementedCustormerServer) UpdateCustomer(context.Context, *CustomerRequest) (*CustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCustomer not implemented")
 }
-func (UnimplementedCustormerServer) FindCustomer(context.Context, *CustomerID) (*CustomerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindCustomer not implemented")
+func (UnimplementedCustormerServer) FindCustomerByPhone(context.Context, *CustomerAuthen) (*CustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindCustomerByPhone not implemented")
+}
+func (UnimplementedCustormerServer) FindCustomerByEmail(context.Context, *CustomerAuthen) (*CustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindCustomerByEmail not implemented")
+}
+func (UnimplementedCustormerServer) FindCustomerById(context.Context, *CustomerAuthen) (*CustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindCustomerById not implemented")
 }
 func (UnimplementedCustormerServer) ListCustomer(context.Context, *ListCustomerRequest) (*ListCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCustomer not implemented")
 }
-func (UnimplementedCustormerServer) ChangePassword(context.Context, *CustomerID) (*Empty, error) {
+func (UnimplementedCustormerServer) ChangePassword(context.Context, *CustomerAuthen) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
 }
-func (UnimplementedCustormerServer) BookingHistory(context.Context, *CustomerID) (*History, error) {
+func (UnimplementedCustormerServer) BookingHistory(context.Context, *CustomerAuthen) (*HistoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BookingHistory not implemented")
 }
 func (UnimplementedCustormerServer) mustEmbedUnimplementedCustormerServer() {}
@@ -172,20 +200,56 @@ func _Custormer_UpdateCustomer_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Custormer_FindCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CustomerID)
+func _Custormer_FindCustomerByPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerAuthen)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CustormerServer).FindCustomer(ctx, in)
+		return srv.(CustormerServer).FindCustomerByPhone(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/booking.Custormer/FindCustomer",
+		FullMethod: "/booking.Custormer/FindCustomerByPhone",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustormerServer).FindCustomer(ctx, req.(*CustomerID))
+		return srv.(CustormerServer).FindCustomerByPhone(ctx, req.(*CustomerAuthen))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Custormer_FindCustomerByEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerAuthen)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustormerServer).FindCustomerByEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/booking.Custormer/FindCustomerByEmail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustormerServer).FindCustomerByEmail(ctx, req.(*CustomerAuthen))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Custormer_FindCustomerById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerAuthen)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustormerServer).FindCustomerById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/booking.Custormer/FindCustomerById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustormerServer).FindCustomerById(ctx, req.(*CustomerAuthen))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -209,7 +273,7 @@ func _Custormer_ListCustomer_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _Custormer_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CustomerID)
+	in := new(CustomerAuthen)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -221,13 +285,13 @@ func _Custormer_ChangePassword_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/booking.Custormer/ChangePassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustormerServer).ChangePassword(ctx, req.(*CustomerID))
+		return srv.(CustormerServer).ChangePassword(ctx, req.(*CustomerAuthen))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Custormer_BookingHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CustomerID)
+	in := new(CustomerAuthen)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -239,7 +303,7 @@ func _Custormer_BookingHistory_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/booking.Custormer/BookingHistory",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustormerServer).BookingHistory(ctx, req.(*CustomerID))
+		return srv.(CustormerServer).BookingHistory(ctx, req.(*CustomerAuthen))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -260,8 +324,16 @@ var Custormer_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Custormer_UpdateCustomer_Handler,
 		},
 		{
-			MethodName: "FindCustomer",
-			Handler:    _Custormer_FindCustomer_Handler,
+			MethodName: "FindCustomerByPhone",
+			Handler:    _Custormer_FindCustomerByPhone_Handler,
+		},
+		{
+			MethodName: "FindCustomerByEmail",
+			Handler:    _Custormer_FindCustomerByEmail_Handler,
+		},
+		{
+			MethodName: "FindCustomerById",
+			Handler:    _Custormer_FindCustomerById_Handler,
 		},
 		{
 			MethodName: "ListCustomer",

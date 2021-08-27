@@ -8,6 +8,7 @@ require (
 	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.1.2
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/jinzhu/copier v0.3.2
 	github.com/spf13/viper v1.8.1
 	google.golang.org/grpc v1.40.0

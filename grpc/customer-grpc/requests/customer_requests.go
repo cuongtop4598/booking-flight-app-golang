@@ -10,3 +10,7 @@ type Customer struct {
 	Password    string `json:"password" binding:"required"`
 	Active      bool   `json:"active"`
 }
+
+type ListCustomerRequests struct {
+	Active bool `json:"active"`
+}

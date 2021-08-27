@@ -127,7 +127,7 @@ func (h *flightHandler) FindFlight(c *gin.Context) {
 		AvailableSlot: fRes.AvailableSlot,
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusText(http.StatusOK),
+		"code":    http.StatusCreated,
 		"payload": dto,
 	})
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/grpc/flight-grpc/handlers"
-	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/grpc/flight-grpc/repositories"
+	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/grpc/customer-grpc/handlers"
+	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/grpc/customer-grpc/repositories"
 	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/helper"
 	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/pb"
 	"github.com/spf13/viper"
@@ -23,16 +23,16 @@ func main() {
 		panic(err)
 	}
 	s := grpc.NewServer()
-	flightRepository, err := repositories.NewDBManager()
+	customertRepository, err := repositories.NewDBManager()
 	if err != nil {
 		panic(err)
 	}
-	h, err := handlers.NewFlighHandler(flightRepository)
+	h, err := handlers.NewCustomerHandler(customertRepository)
 	if err != nil {
 		panic(err)
 	}
 	reflection.Register(s)
-	pb.RegisterFlightServer(s, h)
+	pb.RegisterCustormerServer(s, h)
 	fmt.Printf("Listen at port: %v", viper.GetInt("socket.port"))
 	s.Serve(listen)
 }

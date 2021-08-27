@@ -21,7 +21,7 @@ type FlightClient interface {
 	CreateFlight(ctx context.Context, in *FlightRequest, opts ...grpc.CallOption) (*FlightResponse, error)
 	UpdateFlight(ctx context.Context, in *FlightRequest, opts ...grpc.CallOption) (*FlightResponse, error)
 	FindFlight(ctx context.Context, in *FlightRequest, opts ...grpc.CallOption) (*FlightResponse, error)
-	FlindListFilght(ctx context.Context, in *FlightRequest, opts ...grpc.CallOption) (*ListFlightResponse, error)
+	FindListFlight(ctx context.Context, in *FlightRequest, opts ...grpc.CallOption) (*ListFlightResponse, error)
 }
 
 type flightClient struct {
@@ -59,9 +59,9 @@ func (c *flightClient) FindFlight(ctx context.Context, in *FlightRequest, opts .
 	return out, nil
 }
 
-func (c *flightClient) FlindListFilght(ctx context.Context, in *FlightRequest, opts ...grpc.CallOption) (*ListFlightResponse, error) {
+func (c *flightClient) FindListFlight(ctx context.Context, in *FlightRequest, opts ...grpc.CallOption) (*ListFlightResponse, error) {
 	out := new(ListFlightResponse)
-	err := c.cc.Invoke(ctx, "/booking.Flight/FlindListFilght", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/booking.Flight/FindListFlight", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ type FlightServer interface {
 	CreateFlight(context.Context, *FlightRequest) (*FlightResponse, error)
 	UpdateFlight(context.Context, *FlightRequest) (*FlightResponse, error)
 	FindFlight(context.Context, *FlightRequest) (*FlightResponse, error)
-	FlindListFilght(context.Context, *FlightRequest) (*ListFlightResponse, error)
+	FindListFlight(context.Context, *FlightRequest) (*ListFlightResponse, error)
 	mustEmbedUnimplementedFlightServer()
 }
 
@@ -92,8 +92,8 @@ func (UnimplementedFlightServer) UpdateFlight(context.Context, *FlightRequest) (
 func (UnimplementedFlightServer) FindFlight(context.Context, *FlightRequest) (*FlightResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindFlight not implemented")
 }
-func (UnimplementedFlightServer) FlindListFilght(context.Context, *FlightRequest) (*ListFlightResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FlindListFilght not implemented")
+func (UnimplementedFlightServer) FindListFlight(context.Context, *FlightRequest) (*ListFlightResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindListFlight not implemented")
 }
 func (UnimplementedFlightServer) mustEmbedUnimplementedFlightServer() {}
 
@@ -162,20 +162,20 @@ func _Flight_FindFlight_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Flight_FlindListFilght_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Flight_FindListFlight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FlightRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FlightServer).FlindListFilght(ctx, in)
+		return srv.(FlightServer).FindListFlight(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/booking.Flight/FlindListFilght",
+		FullMethod: "/booking.Flight/FindListFlight",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FlightServer).FlindListFilght(ctx, req.(*FlightRequest))
+		return srv.(FlightServer).FindListFlight(ctx, req.(*FlightRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -200,8 +200,8 @@ var Flight_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Flight_FindFlight_Handler,
 		},
 		{
-			MethodName: "FlindListFilght",
-			Handler:    _Flight_FlindListFilght_Handler,
+			MethodName: "FindListFlight",
+			Handler:    _Flight_FindListFlight_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
