@@ -29,6 +29,6 @@ func main() {
 	gr.GET("/find", h.ViewBooking)
 	gr.GET("/cancel", h.CancelBooking)
 	//Listen and serve
-	fmt.Println("Listen and serve at oort: 3334")
+	fmt.Println("Listen and serve at port: 3334")
 	http.ListenAndServe(":3334", g)
 }
