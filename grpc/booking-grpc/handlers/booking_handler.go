@@ -133,6 +133,28 @@ func (h *BookingHandler) FindBooking(ctx context.Context, in *pb.BookingCode) (*
 	}, nil
 }
 
+func (h *BookingHandler) FindBookingByCustomerId(ctx context.Context, in *pb.CustomeId) (*pb.ListMyBookingResponse, error) {
+	bReq, err := h.bookingRepositories.FindBookingByCustomerId(ctx, in.Id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, err
+	}
+	listBooking := []*pb.BookingResponse{}
+	for _, v := range bReq {
+		listBooking = append(listBooking, &pb.BookingResponse{
+			Id:         v.Id.String(),
+			Status:     v.Status,
+			Code:       v.Code,
+			CustomerId: v.CustomerId.String(),
+			FlightId:   v.FlightId.String(),
+			BookedDate: timestamppb.New(v.Booked_date),
+		})
+	}
+	return &pb.ListMyBookingResponse{Bookings: listBooking}, nil
+}
+
 func (h *BookingHandler) CancelBooking(ctx context.Context, in *pb.BookingCode) (*pb.BookingResponse, error) {
 	bReq, err := h.bookingRepositories.FindBooking(ctx, in.Code)
 	if err != nil {

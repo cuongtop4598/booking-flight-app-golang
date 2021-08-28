@@ -18,11 +18,15 @@ import (
 
 type CustomerHandler struct {
 	pb.UnimplementedCustormerServer
+	bookingClient      pb.SEOLEBookingClient
+	flightClient       pb.FlightClient
 	customerRepository repositories.CustomerRepository
 }
 
-func NewCustomerHandler(customerRepository repositories.CustomerRepository) (*CustomerHandler, error) {
+func NewCustomerHandler(bookingClient pb.SEOLEBookingClient, flightClient pb.FlightClient, customerRepository repositories.CustomerRepository) (*CustomerHandler, error) {
 	return &CustomerHandler{
+		bookingClient:      bookingClient,
+		flightClient:       flightClient,
 		customerRepository: customerRepository,
 	}, nil
 }
@@ -181,15 +185,44 @@ func (h *CustomerHandler) ChangePassword(ctx context.Context, in *pb.CustomerAut
 	return &pb.Empty{}, nil
 }
 
-// func (h *CustomerHandler) BookingHistory(ctx context.Context, in *pb.CustomerAuthen) (*pb.History, error) {
-// 	customer, err := h.customerRepository.GetCustomerByPhone(ctx, in.Phone)
-// 	if err != nil {
-// 		if err == nil {
-// 			if err == sql.ErrNoRows {
-// 				return nil, status.Error(codes.NotFound, err.Error())
-// 			}
-// 			return nil, err
-// 		}
-// 	}
+func (h *CustomerHandler) BookingHistory(ctx context.Context, in *pb.CustomerAuthen) (*pb.HistoryResponse, error) {
+	customer, err := h.customerRepository.GetCustomerByPhone(ctx, in.Phone)
+	if err != nil {
+		if err == nil {
+			if err == sql.ErrNoRows {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+			return nil, err
+		}
+	}
+	bookingInfo, err := h.bookingClient.FindBookingByCustomerId(ctx, &pb.CustomeId{Id: customer.Id.String()})
+	if err != nil {
+		if err == nil {
+			if err == sql.ErrNoRows {
+				return nil, status.Error(codes.NotFound, "booking not found")
+			}
+			return nil, err
+		}
+	}
+	historysRes := &pb.HistoryResponse{}
 
-// }
+	for _, v := range bookingInfo.Bookings {
+		tmp, err := h.flightClient.FindFlight(ctx, &pb.FlightRequest{Id: v.FlightId})
+		if err != nil {
+			if err == nil {
+				if err == sql.ErrNoRows {
+					return nil, status.Error(codes.NotFound, "flight not found")
+				}
+				return nil, err
+			}
+		}
+		historysRes.Historys = append(historysRes.Historys, &pb.History{
+			BookingCode: v.Code,
+			BookingDate: v.BookedDate.String(),
+			Status:      v.Status,
+			Flight:      tmp,
+		})
+	}
+
+	return historysRes, nil
+}

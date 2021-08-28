@@ -11,6 +11,7 @@ import "flight.proto";
 service SEOLEBooking{
     rpc CreateBooking(BookingRequest) returns (BookingResponse);
     rpc FindBooking(BookingCode) returns (BookingInfo);
+    rpc FindBookingByCustomerId(CustomeId) returns (ListMyBookingResponse);
     rpc CancelBooking(BookingCode) returns (BookingResponse);
     rpc ViewBooking(CustomerAuthen) returns (ListBookingReponse);
 };
@@ -46,6 +47,14 @@ message BookingResponse {
 
 message BookingCode {
     string code = 1;
+}
+
+message CustomeId {
+    string id = 1;
+}
+
+message ListMyBookingResponse {
+    repeated BookingResponse bookings = 1;
 }
 
 message ListBookingReponse {

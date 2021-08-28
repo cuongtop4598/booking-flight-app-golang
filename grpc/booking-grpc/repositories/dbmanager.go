@@ -16,6 +16,7 @@ type BookingRepositories interface {
 	CreateBooking(ctx context.Context, req *requests.BookingRequest) (*models.Booking, error)
 	FindBooking(ctx context.Context, bookingCode string) (*models.Booking, error)
 	UpdateBooking(ctx context.Context, model *models.Booking) (*models.Booking, error)
+	FindBookingByCustomerId(ctx context.Context, customerId string) ([]*models.Booking, error)
 }
 
 type dbmanager struct {
@@ -61,6 +62,13 @@ func (m *dbmanager) FindBooking(ctx context.Context, bookingCode string) (*model
 		return nil, err
 	}
 	return &booking, nil
+}
+func (m *dbmanager) FindBookingByCustomerId(ctx context.Context, customerId string) ([]*models.Booking, error) {
+	booking := []*models.Booking{}
+	if err := m.Where(&models.Booking{CustomerId: uuid.MustParse(customerId)}).Find(&booking).Error; err != nil {
+		return nil, err
+	}
+	return booking, nil
 }
 
 func (m *dbmanager) UpdateBooking(ctx context.Context, model *models.Booking) (*models.Booking, error) {

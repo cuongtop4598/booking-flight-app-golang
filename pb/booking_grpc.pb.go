@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SEOLEBookingClient interface {
 	CreateBooking(ctx context.Context, in *BookingRequest, opts ...grpc.CallOption) (*BookingResponse, error)
 	FindBooking(ctx context.Context, in *BookingCode, opts ...grpc.CallOption) (*BookingInfo, error)
+	FindBookingByCustomerId(ctx context.Context, in *CustomeId, opts ...grpc.CallOption) (*ListMyBookingResponse, error)
 	CancelBooking(ctx context.Context, in *BookingCode, opts ...grpc.CallOption) (*BookingResponse, error)
 	ViewBooking(ctx context.Context, in *CustomerAuthen, opts ...grpc.CallOption) (*ListBookingReponse, error)
 }
@@ -50,6 +51,15 @@ func (c *sEOLEBookingClient) FindBooking(ctx context.Context, in *BookingCode, o
 	return out, nil
 }
 
+func (c *sEOLEBookingClient) FindBookingByCustomerId(ctx context.Context, in *CustomeId, opts ...grpc.CallOption) (*ListMyBookingResponse, error) {
+	out := new(ListMyBookingResponse)
+	err := c.cc.Invoke(ctx, "/booking.SEOLEBooking/FindBookingByCustomerId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sEOLEBookingClient) CancelBooking(ctx context.Context, in *BookingCode, opts ...grpc.CallOption) (*BookingResponse, error) {
 	out := new(BookingResponse)
 	err := c.cc.Invoke(ctx, "/booking.SEOLEBooking/CancelBooking", in, out, opts...)
@@ -74,6 +84,7 @@ func (c *sEOLEBookingClient) ViewBooking(ctx context.Context, in *CustomerAuthen
 type SEOLEBookingServer interface {
 	CreateBooking(context.Context, *BookingRequest) (*BookingResponse, error)
 	FindBooking(context.Context, *BookingCode) (*BookingInfo, error)
+	FindBookingByCustomerId(context.Context, *CustomeId) (*ListMyBookingResponse, error)
 	CancelBooking(context.Context, *BookingCode) (*BookingResponse, error)
 	ViewBooking(context.Context, *CustomerAuthen) (*ListBookingReponse, error)
 	mustEmbedUnimplementedSEOLEBookingServer()
@@ -88,6 +99,9 @@ func (UnimplementedSEOLEBookingServer) CreateBooking(context.Context, *BookingRe
 }
 func (UnimplementedSEOLEBookingServer) FindBooking(context.Context, *BookingCode) (*BookingInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindBooking not implemented")
+}
+func (UnimplementedSEOLEBookingServer) FindBookingByCustomerId(context.Context, *CustomeId) (*ListMyBookingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindBookingByCustomerId not implemented")
 }
 func (UnimplementedSEOLEBookingServer) CancelBooking(context.Context, *BookingCode) (*BookingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelBooking not implemented")
@@ -144,6 +158,24 @@ func _SEOLEBooking_FindBooking_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SEOLEBooking_FindBookingByCustomerId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomeId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SEOLEBookingServer).FindBookingByCustomerId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/booking.SEOLEBooking/FindBookingByCustomerId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SEOLEBookingServer).FindBookingByCustomerId(ctx, req.(*CustomeId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SEOLEBooking_CancelBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BookingCode)
 	if err := dec(in); err != nil {
@@ -194,6 +226,10 @@ var SEOLEBooking_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindBooking",
 			Handler:    _SEOLEBooking_FindBooking_Handler,
+		},
+		{
+			MethodName: "FindBookingByCustomerId",
+			Handler:    _SEOLEBooking_FindBookingByCustomerId_Handler,
 		},
 		{
 			MethodName: "CancelBooking",
