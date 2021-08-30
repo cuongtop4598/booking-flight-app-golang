@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/grpc/booking-grpc/models"
 	"github.com/cuongtop4598/booking_assigment/booking-flight-app-golang/grpc/booking-grpc/repositories"
@@ -52,13 +51,13 @@ func (h *BookingHandler) CreateBooking(ctx context.Context, in *pb.BookingReques
 			return nil, err
 		}
 	}
-	if helper.CaculateDistanceOfTwoTime(flight.Date.AsTime(), time.Now()) > 12 {
-		return nil, status.Error(codes.Internal, "flight date exceeded")
-	}
-	if flight.AvailableSlot == 100 {
-		return nil, status.Error(codes.Internal, "out of slot")
-	}
-	_, err = h.customersClient.FindCustomerById(ctx, &pb.CustomerAuthen{
+	// if helper.CaculateDistanceOfTwoTime(flight.Date.AsTime(), time.Now()) > 12 {
+	// 	return nil, status.Error(codes.Internal, "flight date exceeded")
+	// }
+	// if flight.AvailableSlot == 100 {
+	// 	return nil, status.Error(codes.Internal, "out of slot")
+	// }
+	customer, err := h.customersClient.FindCustomerById(ctx, &pb.CustomerAuthen{
 		Id: in.CustomerId,
 	})
 	if err != nil {
@@ -75,8 +74,8 @@ func (h *BookingHandler) CreateBooking(ctx context.Context, in *pb.BookingReques
 	booking := &requests.BookingRequest{
 		Id:         uuid.New(),
 		Slut:       helper.Random_generate_string(10),
-		CustomerId: uuid.MustParse(in.CustomerId),
-		FlightId:   uuid.MustParse(in.FlightId),
+		CustomerId: uuid.MustParse(customer.Id),
+		FlightId:   uuid.MustParse(flight.Id),
 	}
 	res, err := h.bookingRepositories.CreateBooking(ctx, booking)
 	if err != nil {

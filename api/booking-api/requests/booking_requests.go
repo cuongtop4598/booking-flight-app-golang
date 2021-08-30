@@ -1,12 +1,10 @@
 package requests
 
-import "github.com/google/uuid"
-
 type BookingRequest struct {
-	Id         uuid.UUID `json:"id"`
-	Slut       string    `json:"slut"`
-	CustomerId uuid.UUID `json:"customer"`
-	FlightId   uuid.UUID `json:"flight"`
+	Id         string `json:"id"`
+	Slut       string `json:"slut"`
+	CustomerId string `json:"customer_id"`
+	FlightId   string `json:"flight_id"`
 }
 
 type BookingCodeRequest struct {

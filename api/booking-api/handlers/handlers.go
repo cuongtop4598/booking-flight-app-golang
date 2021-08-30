@@ -50,10 +50,10 @@ func (h *bookingHandler) Booking(c *gin.Context) {
 		return
 	}
 	bReq := &pb.BookingRequest{
-		Id:         req.Id.String(),
+		Id:         req.Id,
 		Slut:       req.Slut,
-		CustomerId: req.CustomerId.String(),
-		FlightId:   req.FlightId.String(),
+		CustomerId: req.CustomerId,
+		FlightId:   req.FlightId,
 	}
 	bRes, err := h.bookingClient.CreateBooking(c.Request.Context(), bReq)
 	if err != nil {
@@ -65,8 +65,8 @@ func (h *bookingHandler) Booking(c *gin.Context) {
 	}
 	dto := &responses.BookingResponse{
 		Id:          bRes.Id,
-		CustomerId:  bRes.CustomerId,
-		FlightId:    bRes.FlightId,
+		CustomerId:  bReq.CustomerId,
+		FlightId:    bReq.FlightId,
 		Code:        bRes.Code,
 		Status:      bRes.Status,
 		Booked_date: bRes.BookedDate.AsTime().String(),

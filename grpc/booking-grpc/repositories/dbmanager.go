@@ -72,7 +72,7 @@ func (m *dbmanager) FindBookingByCustomerId(ctx context.Context, customerId stri
 }
 
 func (m *dbmanager) UpdateBooking(ctx context.Context, model *models.Booking) (*models.Booking, error) {
-	if err := m.Where(&models.Booking{Code: model.Code}).Updates(&models.Booking{Status: model.Status, Booked_date: model.Booked_date, UpdatedAt: model.UpdatedAt}).Error; err != nil {
+	if err := m.Model(&models.Booking{}).Updates(models.Booking{Status: model.Status, Booked_date: model.Booked_date, UpdatedAt: model.UpdatedAt}).Where("code = ?", model.Code).Error; err != nil {
 		return nil, err
 	}
 	return model, nil
