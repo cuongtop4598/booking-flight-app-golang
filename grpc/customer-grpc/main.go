@@ -17,7 +17,40 @@ import (
 )
 
 func main() {
-	err := helper.AutoBindConfig("config.yml")
+
+	bookingCnn, err := grpc.Dial(":2225", grpc.WithInsecure(),
+		grpc.WithChainUnaryInterceptor(grpc_middleware.ChainUnaryClient(
+			grpc_retry.UnaryClientInterceptor(
+				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
+				grpc_retry.WithMax(2)),
+		)),
+		grpc.WithChainStreamInterceptor(grpc_middleware.ChainStreamClient(
+			grpc_retry.StreamClientInterceptor(
+				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
+				grpc_retry.WithMax(2)),
+		)))
+	if err != nil {
+		panic(err)
+	}
+	bookingClient := pb.NewSEOLEBookingClient(bookingCnn)
+
+	flightCnn, err := grpc.Dial(":2223", grpc.WithInsecure(),
+		grpc.WithChainUnaryInterceptor(grpc_middleware.ChainUnaryClient(
+			grpc_retry.UnaryClientInterceptor(
+				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
+				grpc_retry.WithMax(2)),
+		)),
+		grpc.WithChainStreamInterceptor(grpc_middleware.ChainStreamClient(
+			grpc_retry.StreamClientInterceptor(
+				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
+				grpc_retry.WithMax(2)),
+		)))
+	if err != nil {
+		panic(err)
+	}
+	flightClient := pb.NewFlightClient(flightCnn)
+
+	err = helper.AutoBindConfig("config.yml")
 	if err != nil {
 		panic(err)
 	}
@@ -30,32 +63,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	bookingCnn, err := grpc.Dial("tcp", ":2225", grpc.WithInsecure(),
-		grpc.WithChainUnaryInterceptor(grpc_middleware.ChainUnaryClient(
-			grpc_retry.UnaryClientInterceptor(
-				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
-				grpc_retry.WithMax(2)),
-		)),
-		grpc.WithChainStreamInterceptor(grpc_middleware.ChainStreamClient(
-			grpc_retry.StreamClientInterceptor(
-				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
-				grpc_retry.WithMax(2)),
-		)))
-	bookingClient := pb.NewSEOLEBookingClient(bookingCnn)
-
-	flightCnn, err := grpc.Dial("tcp", ":2223", grpc.WithInsecure(),
-		grpc.WithChainUnaryInterceptor(grpc_middleware.ChainUnaryClient(
-			grpc_retry.UnaryClientInterceptor(
-				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
-				grpc_retry.WithMax(2)),
-		)),
-		grpc.WithChainStreamInterceptor(grpc_middleware.ChainStreamClient(
-			grpc_retry.StreamClientInterceptor(
-				grpc_retry.WithCodes(codes.DeadlineExceeded, codes.Internal),
-				grpc_retry.WithMax(2)),
-		)))
-	flightClient := pb.NewFlightClient(flightCnn)
-
 	h, err := handlers.NewCustomerHandler(bookingClient, flightClient, customertRepository)
 	if err != nil {
 		panic(err)
