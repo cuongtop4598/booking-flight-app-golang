@@ -22,7 +22,7 @@ services:
     volumes:
       - postgresql:/data/postgresql
     ports:
-      - "5445:5445"
+      - "5432:5432" # must be default port
     networks:
       - go-micro
     restart: unless-stopped
